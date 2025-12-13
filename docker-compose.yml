@@ -1,0 +1,27 @@
+services:
+  gateway:
+    build: ./api_gateway
+    ports:
+      - "8000:80"
+    depends_on:
+      - fileservice
+      - analysisservice
+    environment:
+      - FILE_SERVICE_URL=http://fileservice:80
+      - ANALYSIS_SERVICE_URL=http://analysisservice:80
+
+  fileservice:
+    build: ./file_service
+    ports:
+      - "8001:80"
+    volumes:
+      - ./shared/storage:/app/storage
+    environment:
+      - STORAGE_PATH=/app/storage
+
+  analysisservice:
+    build: ./analysis_service
+    ports:
+      - "8002:80"
+    environment:
+      - FILE_SERVICE_URL=http://fileservice:80
